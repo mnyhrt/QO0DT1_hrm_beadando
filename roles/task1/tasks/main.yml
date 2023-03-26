@@ -1,0 +1,68 @@
+---
+# tasks file for task1
+- name: "apache installed"
+  ansible.builtin.dnf:
+    name: "{{ pkg }} "
+    state: present
+
+- name: "start and enable httpd service"
+  ansible.builtin.service:
+    name: "{{ srv }}"
+    state: started
+    enabled: true
+
+- name: "open firewall for http"
+  ansible.posix.firewalld:
+    service: "{{ fw_srv }}"
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: "add port to firewall"
+  ansible.posix.firewalld:
+    port: "{{port_to_fw}}" #8080/tcp
+    permanent: true
+    immediate: true
+    state: enabled  
+
+- name: "add 8080 port to config file"
+  ansible.builtin.lineinfile:
+    path: "{{ cfg_path }}"
+    line: "{{ line_to_cfg}}" #Listen 8080"
+
+- name: "create vhost conf"
+  ansible.builtin.copy:
+    dest: "{{vhost_dest}}" #/etc/httpd/conf.d/10-portvhost.conf"
+    content: |
+      <VirtualHost *:8080>
+          DocumentRoot    /var/web/
+          Errorlog        /var/log/httpd/portvhost.log
+          <Directory /var/web/>
+            Require all granted
+          </Directory>
+      </VirtualHost>
+
+- name: "Create document root"
+  ansible.builtin.file:
+    path: "{{ doc_path }}" #/var/web
+    state: "{{ doc_state }}" #directory
+    owner: "{{ doc_own }}" #root
+    group: "{{ doc_grp }}" #root
+    mode: "{{ doc_mode }}" #'40755'
+    setype: "{{ doc_setype }}" #httpd_sys_content_t
+
+- name: "Create index.html"
+  ansible.builtin.copy:
+    dest: "{{ index_dest }}" #"/var/web/index.html"
+    setype: "{{index_setype}}" #httpd_sys_content_t
+    content: |
+      Teszt 
+
+- name: "Allow Apache to listen on tcp port 8080"
+  community.general.seport:
+     ports: "{{ se_port }}" #8080
+     proto: "{{ se_proto }}" #tcp
+     setype: "{{ se_setype }}" #http_port_t
+     state: present
+  notify: Restart Apache
+

@@ -1,0 +1,38 @@
+---
+# tasks file for task2
+
+- name: start and enable sshd service
+  service:
+    name: sshd.service
+    state: started
+    enabled: true
+
+- name: setup new ssh port
+  ansible.builtin.lineinfile:
+    dest: "{{ cfg_dest }}"
+    regexp: "#?^Port"
+    line: "{{ cfg_linein  }}"
+  notify: Restart sshd
+
+- name: setup selinux for new ssh port
+  seport:
+     ports: "{{se_port}}"
+     proto: "{{se_proto}}"
+     setype: "{{se_setype}}"
+     state: present
+
+- name: allow service on firewall
+  ansible.posix.firewalld:
+    service: ssh
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: open new port on firewall
+  ansible.posix.firewalld:
+    port: "{{ se_port }}/tcp"
+    immediate: true
+    permanent: true
+    state: enabled
+
+  

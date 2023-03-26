@@ -1,0 +1,21 @@
+---
+# vars file for task1
+pkg: httpd
+srv: httpd.service
+fw_srv: http
+cfg_path: "/etc/httpd/conf/httpd.conf"
+port_to_fw: 8080/tcp
+line_to_cfg: Listen 8080
+vhost_dest: /etc/httpd/conf.d/10-portvhost.conf
+doc_path: /var/web
+doc_state: directory
+doc_own: root
+doc_grp: root
+doc_mode: '40755'
+doc_setype: httpd_sys_content_t
+index_dest: /var/web/index.html
+index_setype: httpd_sys_content_t
+se_port: 8080
+se_proto: tcp
+se_setype: http_port_t
+

@@ -1,0 +1,7 @@
+---
+# handlers file for task2
+- name: Restart sshd
+  service:
+    name: sshd.service
+    state: restarted
+

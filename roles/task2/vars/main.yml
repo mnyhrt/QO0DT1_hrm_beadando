@@ -1,0 +1,8 @@
+---
+# vars file for task2
+cfg_dest: /etc/ssh/sshd_config
+cfg_linein: Port 28222
+se_port: 28222
+se_proto: tcp
+se_setype: ssh_port_t
+

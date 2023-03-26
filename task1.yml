@@ -1,0 +1,8 @@
+---
+
+- name: setup apache vhost 
+  hosts: webserver
+
+  roles:
+    - task1
+

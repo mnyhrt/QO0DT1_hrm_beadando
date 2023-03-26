@@ -1,0 +1,19 @@
+- name: apache log rotate
+  hosts: webserver
+  vars:
+    path: /etc/logrotate.d/httpd
+
+  tasks:
+    - name: edit the log file
+      copy:
+        dest: "{{ path }}"
+        content: |
+         /var/log/httpd/*log {
+          daily
+          maxage 7
+          dateext
+          postrotate
+            /bin/systemctl reload httpd.service > /dev/null || true
+          endscript
+          } 
+
