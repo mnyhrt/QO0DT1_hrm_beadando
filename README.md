@@ -10,3 +10,5 @@ task3 : Gép nevének beállítása : web.example.org
 task4 : Apache logok rotálása naponta történjen és 7 darabot őrizzünk meg.
 
 **A megoldás során felhasználtam a community.general collectionsből a seport modult.**
+
+update: felesleges fájlok törölve, így már klónozható a repo
